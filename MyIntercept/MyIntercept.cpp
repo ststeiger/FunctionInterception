@@ -492,10 +492,12 @@ extern "C"
 
 // gdb MyIntercept.exe
 // info address RE_RenderScene
+// disas RE_RenderScene
 // disas 0x012E10CD
 
 
-#define RE_RenderScene_COPY 6
+#define RE_RenderScene_COPY 9 // Visual Studio 2015
+// #define RE_RenderScene_COPY 6 // g++
 
 // int _tmain(int argc, _TCHAR* argv[])
 int main(int argc, char* argv[])
@@ -535,7 +537,7 @@ int main(int argc, char* argv[])
 		
 		RE_RenderScene(); // Calling the modified version
 		// Second time works
-		// RE_RenderScene();
+		RE_RenderScene();
 
 
 		printf("\n\n====================== Unpatching =============================\n");
