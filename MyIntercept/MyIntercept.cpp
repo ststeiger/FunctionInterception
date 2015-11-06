@@ -27,7 +27,7 @@
 
 
 #define NATURALIZE(FUNCTION_NAME) \
-	Naturalized_##FUNCTION_NAME = FuncConvertAddress(Naturalized_##FUNCTION_NAME, &FUNCTION_NAME)
+	Naturalized_##FUNCTION_NAME = FuncConvertAddress(Naturalized_##FUNCTION_NAME, reinterpret_cast<unsigned long> (&FUNCTION_NAME))
 
 
 template <class DataType>
@@ -151,14 +151,23 @@ extern "C"
 
 	
 
+	//void __cdecl RE_RenderScene()
 	void RE_RenderScene()
 	{
 		printf("This is the original RE_RenderScene\n");
 	}
 
-	void (*original_RE_RenderScene)(); // = &RE_RenderScene;
 
-	void modified_RE_RenderScene()
+	// void(__cdecl  *original_RE_RenderScene)(); // = &RE_RenderScene;
+	void(*original_RE_RenderScene)(); // = &RE_RenderScene;
+
+
+	// void(__cdecl  *Naturalized_RE_RenderScene)(); // = &RE_RenderScene;
+	void(*Naturalized_RE_RenderScene)(); // = &RE_RenderScene;
+	
+
+	//void __cdecl modified_RE_RenderScene()
+	void __cdecl modified_RE_RenderScene()
 	{
 		printf("Entering the modified RenderScene\n");
 
@@ -182,7 +191,8 @@ extern "C"
 // disas 0x012E10CD
 
 
-#define RE_RenderScene_COPY 9 // Visual Studio 2015
+//#define RE_RenderScene_COPY 9 // Visual Studio 2015
+#define RE_RenderScene_COPY 9 // Visual Studio 2013
 // #define RE_RenderScene_COPY 6 // g++
 
 // int _tmain(int argc, _TCHAR* argv[])
@@ -201,12 +211,25 @@ int main(int argc, char* argv[])
 		printf("0x%02X\n", memoryDumpPointer[i]);
 	}
 
+
 	if (true)
 	{
 		RE_RenderScene(); // Calling original version
 		
+		printf("\n\n====================== Naturalizing =============================\n");
+		NATURALIZE(RE_RenderScene);
+		// Expands to 
+		// Naturalized_RE_RenderScene = FuncConvertAddress(Naturalized_RE_RenderScene, reinterpret_cast<unsigned long>  (&RE_RenderScene));
+		printf("====================== Naturalized ==============================\n\n");
+		
+		(*Naturalized_RE_RenderScene)();
+
+
 		printf("\n\n====================== Hotpatching =============================\n");
 		// HOTPATCH(RE_RenderScene);
+		/////// Expands to
+		/////// InterceptFunction(&RE_RenderScene, RE_RenderScene_COPY, &modified_RE_RenderScene);
+		/////// original_RE_RenderScene = FuncInterceptFunction(RE_RenderScene, modified_RE_RenderScene);
 
 		// Overwriting the RE_RenderScene function (JMP REL32 = 0xE9)
 		original_RE_RenderScene = TemplateFuncInterceptFunction(
@@ -216,13 +239,10 @@ int main(int argc, char* argv[])
 			static_cast<unsigned long> (RE_RenderScene_COPY)
 		);
 
-		/////// Expands to
-		/////// InterceptFunction(&RE_RenderScene, RE_RenderScene_COPY, &modified_RE_RenderScene);
-		/////// original_RE_RenderScene = FuncInterceptFunction(RE_RenderScene, modified_RE_RenderScene);
 		printf("====================== Hotpatched ==============================\n\n");
 		
 		RE_RenderScene(); // Calling the modified version
-		// Second time works
+		// Second time works as well
 		RE_RenderScene();
 
 
