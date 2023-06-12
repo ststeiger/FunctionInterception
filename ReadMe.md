@@ -15,24 +15,7 @@ UNPATCH is just a convenience preprocessor-function-definition for unpatchfunc.
 
 NATURALIZE is a preprocessor defined function which assigns a function in the code segment to a function pointer based on the function's address. 
 
-Example:
-```
-	//void __cdecl RE_RenderScene()
-	void RE_RenderScene()
-	{
-		printf("This is the original RE_RenderScene\n");
-	}
-
-
-	// void(__cdecl  *original_RE_RenderScene)(); // = &RE_RenderScene;
-	void(*original_RE_RenderScene)(); // = &RE_RenderScene;
-
-
-	// void(__cdecl  *Naturalized_RE_RenderScene)(); // = &RE_RenderScene;
-	void(*Naturalized_RE_RenderScene)(); // = &RE_RenderScene;
-```
-
-Example: 
+The target function RE_RenderScene, and the backup and naturalization pointers:
 ```  
 extern "C" 
 {
