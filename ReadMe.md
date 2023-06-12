@@ -16,7 +16,7 @@ UNPATCH is just a convenience preprocessor-function-definition for unpatchfunc.
 NATURALIZE is a preprocessor defined function which assigns a function in the code segment to a function pointer based on the function's address. 
 
 Example:
-
+```
 	//void __cdecl RE_RenderScene()
 	void RE_RenderScene()
 	{
@@ -30,10 +30,10 @@ Example:
 
 	// void(__cdecl  *Naturalized_RE_RenderScene)(); // = &RE_RenderScene;
 	void(*Naturalized_RE_RenderScene)(); // = &RE_RenderScene;
-	
+```
 
 Example: 
-`   
+```  
 extern "C" 
 {
 
@@ -72,11 +72,11 @@ extern "C"
 
 	
 }
-`
+```
 
 
 Then you can call it in code: 
-`
+```
 //#define RE_RenderScene_COPY 9 // Visual Studio 2015
 #define RE_RenderScene_COPY 9 // Visual Studio 2013
 // #define RE_RenderScene_COPY 6 // g++
@@ -144,5 +144,4 @@ int main(int argc, char* argv[])
 	WaitChar();
 	return EXIT_SUCCESS;
 }
-
-`
+```
